@@ -9,4 +9,10 @@ urlpatterns = [
         name='principal-register'
     ),
 
+    path(
+        
+        'create-user/',
+        views.UserCreateView.as_view(),
+        name='create-user'
+    )
 ]

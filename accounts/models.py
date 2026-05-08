@@ -1,6 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+# These come from TWO places:
+
+# From AbstractUser:
+# ✔ username
+# ✔ email
+# ✔ password
+
+# From your model:
+# ✔ role
 
 class User(AbstractUser):
     

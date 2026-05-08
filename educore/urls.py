@@ -29,6 +29,7 @@ urlpatterns = [
     
     # for accounts
     path('api/', include('accounts.urls') ),
+    path('api/', include('profiles.urls')),
     
     
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

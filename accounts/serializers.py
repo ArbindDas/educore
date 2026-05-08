@@ -3,7 +3,7 @@ from rest_framework import serializers
 from .models import User
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
-
+from profiles.models import PrincipalProfile , TeacherProfile, StudentProfile
 
 
 
@@ -34,5 +34,14 @@ class RegisterSerializer(serializers.ModelSerializer):
             role = validate_data['role']
         )
         
+        if user.role == 'PRINCIPAL':
+            PrincipalProfile.objects.create(user=True)
+            
+        elif user.role == 'TEACHER':
+            TeacherProfile.objects.create(user=True)
         
+        elif user.role == 'STUDENT':
+            StudentProfile.objects.create(user=True)
+            
+            
         return user

@@ -5,7 +5,8 @@ from profiles.models import TeacherProfile
 from accounts.models import User
 from rest_framework import serializers
 from accounts.models import User
-from profiles.models import TeacherProfile
+from profiles.models import TeacherProfile, StudentProfile
+
 
 class PrincipalProfileSerializer (serializers.ModelSerializer):
     
@@ -50,9 +51,40 @@ class TeacherCreateSerializer(serializers.ModelSerializer):
         )
 
         return teacher
-    
-    
-    
+class StudentCreateSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField()
+
+    class Meta:
+        model = StudentProfile
+        fields = [
+            'user_id',
+            'class_name',
+            'section',
+            'roll_number',
+            'admission_number',
+            'address'
+        ]
+
+    def create(self, validated_data):
+        user_id = validated_data.pop('user_id')
+
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("User does not exist")
+
+        if user.role.lower() != "student":
+            raise serializers.ValidationError("User is not a student")
+
+        if hasattr(user, "student_profile"):
+            raise serializers.ValidationError("Student profile already exists")
+
+        student = StudentProfile.objects.create(
+            user=user,
+            **validated_data
+        )
+
+        return student
 class TeacherUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:

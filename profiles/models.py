@@ -40,7 +40,6 @@ class TeacherProfile(models.Model):
         return self.user.username
 
 
-
 class StudentProfile(models.Model):
 
     user = models.OneToOneField(
@@ -49,13 +48,17 @@ class StudentProfile(models.Model):
         related_name='student_profile'
     )
 
-    class_name = models.CharField(max_length=10)
+    class_name = models.CharField(max_length=50)
     section = models.CharField(max_length=10)
 
-    roll_number = models.IntegerField()
+    roll_number = models.PositiveIntegerField()
 
-    admission_number = models.CharField(max_length=30)
-    address = models.CharField(max_length=60)
+    admission_number = models.CharField(
+        max_length=30,
+        unique=True
+    )
+
+    address = models.TextField()
 
     def __str__(self):
         return self.user.username

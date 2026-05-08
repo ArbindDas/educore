@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from profiles.models import PrincipalProfile, TeacherProfile
 from .serializers import PrincipalProfileSerializer
-from .serializers import TeacherCreateSerializer, TeacherUpdateSerializer
+from .serializers import TeacherCreateSerializer, TeacherUpdateSerializer, StudentCreateSerializer
 # Create your views here.
 
 
@@ -40,8 +40,36 @@ class PrincipalProfileView(APIView):
         return Response(serializer.errors, status=400)
     
     
+    
+    
+class StudentListCreateView(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def post(self, request):
 
+        if request.user.role.lower() != 'principal':
+            return Response(
+                {"error": "Not allowed"},
+                status=403
+            )
+
+        serializer = StudentCreateSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(
+                {
+                    "message": "Student profile created",
+                    "data": serializer.data
+                },
+                status=201
+            )
+
+        print(serializer.errors)   # 👈 ADD THIS
+
+        return Response(serializer.errors, status=400)
+    
 class TeacherListCreateView(APIView):
     permission_classes = [IsAuthenticated]
     

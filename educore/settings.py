@@ -70,6 +70,14 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',  # 🔥 GLOBAL PROTECTION
     ),
+     'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+        
+    #   Now in browser you’ll see:
+    # ✔ full error details
+    # ✔ validation errors clearly
+    )
 }
 
 MIDDLEWARE = [
@@ -83,6 +91,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'educore.urls'
+DEBUG = True
 
 TEMPLATES = [
     {

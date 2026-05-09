@@ -40,13 +40,19 @@ class RegisterSerializer(serializers.ModelSerializer):
         email=validated_data['email'],
         password=validated_data['password'],
         role=role
-    )
+    )   
 
-        if user.role == User.TEACHER:
-            TeacherProfile.objects.create(user=user)
+        # if user.role == User.TEACHER:
+        #     TeacherProfile.objects.create(user=user)
+        if user.role == 'TEACHER':
+            TeacherProfile.objects.create(user=True)
+        
+        elif user.role == 'STUDENT':
+            StudentProfile.objects.create(user=True)
+        
 
-        elif user.role == User.STUDENT:
-            StudentProfile.objects.create(user=user)
+        # elif user.role == User.STUDENT:
+        #     StudentProfile.objects.create(user=user)
 
         return user
         

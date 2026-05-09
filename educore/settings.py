@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'accounts',
     'rest_framework',
     'academics',
-    'profiles'
+    'profiles',
+    'drf_spectacular',
 ]
 
 
@@ -63,7 +64,29 @@ SIMPLE_JWT = {
     ),
 }
 
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "EduCore API",
+    "DESCRIPTION": "School Management System APIs",
+    "VERSION": "1.0.0",
+
+    # JWT support in Swagger
+    "SECURITY": [{"bearerAuth": []}],
+
+    "COMPONENTS": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
+            }
+        }
+    },
+}
+
 REST_FRAMEWORK = {
+    
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),

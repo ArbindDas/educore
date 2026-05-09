@@ -7,6 +7,7 @@ from .serializers import RegisterSerializer
 from .models import User
 from rest_framework.permissions import AllowAny
 from profiles.models import PrincipalProfile
+from drf_spectacular.utils import extend_schema
 # Create your views here.
 
 # View = handles request
@@ -42,6 +43,7 @@ from profiles.models import PrincipalProfile
 class PrincipalRegisterView(APIView):
     permission_classes = [AllowAny]
 
+    @extend_schema(request=RegisterSerializer, responses={201: None})  # 👈 add this
     def post(self, request):
 
         # 🚨 Block second principal
@@ -78,9 +80,11 @@ from .serializers import RegisterSerializer
 from .models import User
 from .permissions import IsPrincipal
 
+
 class UserCreateView(APIView):
     permission_classes = [IsAuthenticated , IsPrincipal]
     
+    @extend_schema(request=RegisterSerializer, responses={201: None})  # 👈 add this
     def post(self , request):
         
         serializer = RegisterSerializer(data=request.data)

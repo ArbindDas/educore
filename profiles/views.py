@@ -4,13 +4,27 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from profiles.models import PrincipalProfile, TeacherProfile, StudentProfile
 from .serializers import PrincipalProfileSerializer
-from .serializers import TeacherCreateSerializer, TeacherUpdateSerializer, StudentCreateSerializer, StudentUpdateSerializer
+# from .serializers import TeacherCreateSerializer, TeacherUpdateSerializer, StudentCreateSerializer, StudentUpdateSerializer
 # Create your views here.
+from .serializers import (
+    PrincipalProfileSerializer,
+    TeacherCreateSerializer,
+    TeacherUpdateSerializer,
+    StudentCreateSerializer,
+    StudentUpdateSerializer,
+    # StudentProfileSerializer,   # ✅ needed for GET list/detail
+    # TeacherProfileSerializer,   # ✅ needed for GET list/detail
+)
+from drf_spectacular.utils import extend_schema
 
+# ─────────────────────────────────────────────
+# PRINCIPAL
+# ─────
 
 class PrincipalProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(responses=PrincipalProfileSerializer)  # GET
     def get(self, request):
         profile, created = PrincipalProfile.objects.get_or_create(
             user=request.user
@@ -19,6 +33,7 @@ class PrincipalProfileView(APIView):
         serializer = PrincipalProfileSerializer(profile)
         return Response(serializer.data)
 
+    @extend_schema(request=PrincipalProfileSerializer, responses=PrincipalProfileSerializer)  # ✅ fixed: was missing request=
     def patch(self, request):
         profile, created = PrincipalProfile.objects.get_or_create(
             user=request.user
@@ -40,11 +55,15 @@ class PrincipalProfileView(APIView):
         return Response(serializer.errors, status=400)
     
     
-    
+# ─────────────────────────────────────────────
+# STUDENT LIST + CREATE
+# ─────────────────────────────────────────────
     
 class StudentListCreateView(APIView):
     permission_classes = [IsAuthenticated]
 
+    
+    @extend_schema(request=StudentCreateSerializer, responses={201: None})
     def post(self, request):
 
         if request.user.role.lower() != 'principal':
@@ -71,6 +90,9 @@ class StudentListCreateView(APIView):
         return Response(serializer.errors, status=400)
     
     # Get list all student OR single student
+    @extend_schema(
+    responses={200: list}
+)
     def get(self , request):
         permission_classes = [IsAuthenticated]
         if request.user.role !='principal':
@@ -96,12 +118,17 @@ class StudentListCreateView(APIView):
         return Response(data)
     
     
-    
+# ─────────────────────────────────────────────
+# STUDENT DETAIL (get, patch, delete)
+# ─────────────────────────────────────────────
+ 
 class StudentDetailView(APIView):
     permission_classes = [IsAuthenticated]
     
     #Get single student
-    
+    @extend_schema(
+    responses={200: list}
+)
     def get(self , request, pk):
         if request.user.role!= 'principal':
             return Response(
@@ -122,6 +149,7 @@ class StudentDetailView(APIView):
             'address': student.address
         })
         
+    @extend_schema(request=StudentUpdateSerializer, responses=StudentUpdateSerializer)
     def patch(self , request, pk):
         if request.user.role != 'principal':
             return Response(
@@ -147,6 +175,7 @@ class StudentDetailView(APIView):
         return Response(serailizer.errors, status=400)
     
     
+    @extend_schema(responses={204: None})
     def delete(self , request, pk):
         if request.user.role != 'principal':
             return Response({"error": "Not allowed"}, status=403)
@@ -162,12 +191,21 @@ class StudentDetailView(APIView):
         student.delete() # delete the student profile
         
         return Response({"message": "Student deleted"})
+    
+# ─────────────────────────────────────────────
+# TEACHER LIST + CREATE
+# ─────────────────────────────────────────────
+ 
+ 
 class TeacherListCreateView(APIView):
     permission_classes = [IsAuthenticated]
     
     
     
     # Get list all teachers OR single teacher
+    @extend_schema(
+    responses={200: list}
+)
     def get(self , request):
         if request.user.role != 'principal':
             return Response(
@@ -190,6 +228,7 @@ class TeacherListCreateView(APIView):
 
     
     
+    @extend_schema(request=TeacherCreateSerializer, responses={201: None})
     def post(self, request):
         
         # only principal allowed
@@ -212,12 +251,20 @@ class TeacherListCreateView(APIView):
         
         return Response(serializer.errors, status=400)
     
-    
+# ─────────────────────────────────────────────
+# TEACHER DETAIL (get, patch, delete)
+# ────────
+
+
 class TeacherDetailView(APIView):
     permission_classes = [IsAuthenticated]
     
     
     # ✔ GET single teacher
+    
+    @extend_schema(
+    responses={200: list}
+)
     def get(self, request, pk):
 
         if request.user.role != 'principal':
@@ -238,6 +285,7 @@ class TeacherDetailView(APIView):
     
     
     # PATCH update teacher
+    @extend_schema(request=TeacherUpdateSerializer, responses=TeacherUpdateSerializer)
     def patch(self, request, pk):
         
         if request.user.role != 'principal':
@@ -265,6 +313,7 @@ class TeacherDetailView(APIView):
     
     
     # DELETE teacher
+    @extend_schema(responses={204: None})
     def delete(self, request, pk):
         
         

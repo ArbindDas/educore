@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'academics',
     'profiles',
     'drf_spectacular',
+    'attendance',
+    'library',
 ]
 
 

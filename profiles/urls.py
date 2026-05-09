@@ -21,3 +21,6 @@ urlpatterns = [
      
     path('teacher/students/', TeacherStudentsView.as_view(), name='teacher-student-view')
 ]
+
+
+#http://127.0.0.1:8000/api/docs/ 

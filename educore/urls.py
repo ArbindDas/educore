@@ -36,14 +36,33 @@ urlpatterns = [
     ), name='swagger-ui'),
     path('admin/', admin.site.urls),
 
-    path('', views.index, name='index'), # this is for testing purpose only
     
     # for accounts
     path('api/', include('accounts.urls') ),
     path('api/', include('profiles.urls')),
-    
+    path('api/', include('attendance.urls')),
+    path('api/', include('library.urls')),
     
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('', views.index, name='index'), # this is for testing purpose only
+    
     
 ]
+
+
+
+# accounts  → authentication
+# profiles  → people
+# academics → classes
+# attendance → attendance
+# library → books
+
+
+
+# Permissions (VERY IMPORTANT)              
+# Role	                Power
+# Principal         	full access // manage system
+# Teacher	            attendance/marks // attendance + students
+# Student	            own data only // own profile + attendance + books
+# Librarian            	books only // library management

@@ -4,8 +4,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from profiles.models import PrincipalProfile, TeacherProfile, StudentProfile
 from .serializers import PrincipalProfileSerializer
-# from .serializers import TeacherCreateSerializer, TeacherUpdateSerializer, StudentCreateSerializer, StudentUpdateSerializer
-# Create your views here.
 from .serializers import (
     PrincipalProfileSerializer,
     TeacherCreateSerializer,
@@ -14,6 +12,88 @@ from .serializers import (
     StudentUpdateSerializer,
 )
 from drf_spectacular.utils import extend_schema
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
+from .models import StudentProfile
+from .serializers import StudentProfileSerializer, TeacherProfileSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
+from academics.models import TeacherClassAssignment
+from profiles.models import StudentProfile
+from profiles.serializers import StudentProfileSerializer
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+
+from academics.models import TeacherClassAssignment
+from .serializers import TeacherClassAssignmentSerializer
+class MyStudentProfileView(APIView):
+
+    permission_classes = [IsAuthenticated]
+    
+    
+    @extend_schema(
+    responses={200: list}
+)
+    def get(self, request):
+        
+        
+        if request.user.role != "student":
+            return Response(
+        {"error": "Only students can access this"},
+        status=403
+    )
+
+        try:
+            student_profile = StudentProfile.objects.get(
+                user=request.user
+            )
+
+            serializer = StudentProfileSerializer(student_profile)
+
+            return Response(serializer.data)
+
+        except StudentProfile.DoesNotExist:
+            return Response(
+                {"error": "Student profile not found"},
+                status=404
+            )
+
+
+
+class MyTeacherProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    
+    @extend_schema(
+    responses={200: list}
+)
+    def get(self, request):
+        if request.user.role != 'teacher':
+            return Response(
+                {"error": "Not allowed"},
+                status=403
+            )
+        try:
+            teacher_profile = TeacherProfile.objects.get(
+                user = request.user
+            )
+            
+            serializer = TeacherProfileSerializer(teacher_profile)
+             
+            return Response(serializer.data)
+        except TeacherProfile.DoesNotExist:
+            return Response(
+                {"error": "Teacher not Found"},
+                status=404
+            )
 
 # ─────────────────────────────────────────────
 # PRINCIPAL
@@ -338,3 +418,56 @@ class TeacherDetailView(APIView):
 
     
     
+
+
+
+class AssignTeacherToClassView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(request=TeacherClassAssignmentSerializer, responses={201: None})
+    def post(self, request):
+
+        # (IMPORTANT) Only principal can assign
+        if request.user.role != "principal":
+            return Response(
+                {"error": "Only principal can assign teachers"},
+                status=403
+            )
+
+        serializer = TeacherClassAssignmentSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+
+        return Response(serializer.errors, status=400)
+    
+    
+    
+
+
+
+class TeacherStudentsView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+    responses={200: list}
+)
+    def get(self, request):
+
+        if request.user.role != "teacher":
+            return Response({"error": "Only teachers allowed"}, status=403)
+
+        class_ids = TeacherClassAssignment.objects.filter(
+            teacher=request.user
+        ).values_list('academic_class_id', flat=True)
+
+        students = StudentProfile.objects.filter(
+            academic_class_id__in=class_ids
+        )
+
+        serializer = StudentProfileSerializer(students, many=True)
+
+        return Response(serializer.data)

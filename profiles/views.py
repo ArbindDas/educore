@@ -12,8 +12,6 @@ from .serializers import (
     TeacherUpdateSerializer,
     StudentCreateSerializer,
     StudentUpdateSerializer,
-    # StudentProfileSerializer,   # ✅ needed for GET list/detail
-    # TeacherProfileSerializer,   # ✅ needed for GET list/detail
 )
 from drf_spectacular.utils import extend_schema
 

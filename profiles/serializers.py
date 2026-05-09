@@ -51,6 +51,9 @@ class TeacherCreateSerializer(serializers.ModelSerializer):
         )
 
         return teacher
+    
+    
+
 class StudentCreateSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField()
 
@@ -95,3 +98,16 @@ class TeacherUpdateSerializer(serializers.ModelSerializer):
             'qualification',
             'subject'
         ]
+        
+        
+class StudentUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= StudentProfile
+        fields = [
+            'class_name',
+            'section',
+            'roll_number',
+            'admission_number',
+            'address'
+        ]
+

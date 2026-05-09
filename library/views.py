@@ -11,13 +11,16 @@ from .serializers import (
 )
 
 from .permissions import IsLibrarian
-
+from drf_spectacular.utils import extend_schema
 
 # ADD BOOK
 class AddBookView(APIView):
 
     permission_classes = [IsAuthenticated, IsLibrarian]
 
+    @extend_schema(
+    responses={201: "Created Successfully"}
+)
     def post(self, request):
 
         serializer = BookSerializer(data=request.data)
@@ -33,7 +36,9 @@ class AddBookView(APIView):
 class BookListView(APIView):
 
     permission_classes = [IsAuthenticated]
-
+    @extend_schema(
+    responses={200: list}
+)
     def get(self, request):
 
         books = Book.objects.all()
@@ -47,7 +52,10 @@ class BookListView(APIView):
 class UpdateBookView(APIView):
 
     permission_classes = [IsAuthenticated, IsLibrarian]
-
+    
+    @extend_schema(
+    responses={200: "Updated Successfully"}
+)
     def put(self, request, pk):
 
         try:
@@ -77,6 +85,9 @@ class IssueBookView(APIView):
 
     permission_classes = [IsAuthenticated, IsLibrarian]
 
+    @extend_schema(
+    responses={201: "Created Successfully"}
+)
     def post(self, request):
 
         serializer = BookIssueSerializer(
@@ -97,7 +108,9 @@ class IssueBookView(APIView):
 class ReturnBookView(APIView):
 
     permission_classes = [IsAuthenticated, IsLibrarian]
-
+    @extend_schema(
+    responses={201: "Created Successfully"}
+)
     def post(self, request):
 
         issue_id = request.data.get('issue_id')
@@ -135,6 +148,9 @@ class StudentBorrowedBooksView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+    responses={200: list}
+)
     def get(self, request):
 
         if request.user.role != "student":

@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import (
@@ -66,3 +67,5 @@ urlpatterns = [
 # Teacher	            attendance/marks // attendance + students
 # Student	            own data only // own profile + attendance + books
 # Librarian            	books only // library management
+
+# for swager api -> http://127.0.0.1:8000/api/docs/

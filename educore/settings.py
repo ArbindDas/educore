@@ -37,7 +37,180 @@ AUTH_USER_MODEL = 'accounts.User'
 
 # Application definition
 
+
+from django.templatetags.static import static
+from django.urls import reverse_lazy
+
+UNFOLD = {
+    "SITE_TITLE": "EduCore Admin",
+    "SITE_HEADER": "EduCore",
+    "SITE_SUBHEADER": "School Management System",
+    "SITE_URL": "/",
+    "SITE_ICON": {
+        "light": lambda request: static("img/logo-light.png"),
+        "dark":  lambda request: static("img/logo-dark.png"),
+    },
+    "SITE_SYMBOL": "school",           # Material Symbol icon name
+    "SHOW_HISTORY": True,
+    "SHOW_VIEW_ON_SITE": True,
+    "ENVIRONMENT": "educore.settings.environment_callback",  # see below
+    "DASHBOARD_CALLBACK": "educore.views.dashboard_callback",
+    "THEME": "dark",                   # "light" | "dark" | None (user picks)
+    "LOGIN": {
+        "image": lambda request: static("img/login-bg.jpg"),
+        "redirect_after": lambda request: reverse_lazy("admin:index"),
+    },
+    "STYLES": [
+        lambda request: static("css/admin-custom.css"),
+    ],
+    "COLORS": {
+        "font": {
+            "subtle-light": "107 114 128",
+            "subtle-dark":  "156 163 175",
+            "default-light": "75 85 99",
+            "default-dark":  "209 213 219",
+            "important-light": "17 24 39",
+            "important-dark":  "243 244 246",
+        },
+        "primary": {
+            "50":  "240 249 255",
+            "100": "224 242 254",
+            "200": "186 230 253",
+            "300": "125 211 252",
+            "400": "56 189 248",
+            "500": "14 165 233",
+            "600": "2 132 199",
+            "700": "3 105 161",
+            "800": "7 89 133",
+            "900": "12 74 110",
+            "950": "8 47 73",
+        },
+    },
+    "EXTENSIONS": {
+        "modeltranslation": {
+            "flags": {},
+        },
+    },
+    
+    "SIDEBAR": {
+    "show_search": True,
+    "show_all_applications": False,
+    "navigation": [
+        {
+            "title": "Navigation",
+            "separator": True,
+            "collapsible": False,
+            "items": [
+                {
+                    "title": "Dashboard",
+                    "icon": "dashboard",
+                    "link": reverse_lazy("admin:index"),
+                },
+            ],
+        },
+        {
+            "title": "Accounts & Auth",
+            "separator": True,
+            "collapsible": True,
+            "items": [
+                {
+                    "title": "Users",
+                    "icon": "person",
+                    "link": reverse_lazy("admin:accounts_user_changelist"),
+                },
+                {
+                    "title": "Groups",
+                    "icon": "group",
+                    "link": reverse_lazy("admin:auth_group_changelist"),
+                },
+            ],
+        },
+        {
+            "title": "Academics",
+            "separator": True,
+            "collapsible": True,
+            "items": [
+                {
+                    "title": "Classes",
+                    "icon": "class",
+                    "link": reverse_lazy("admin:academics_academicclass_changelist"),       # ← AcademicClass model
+                },
+                {
+                    "title": "Teacher assignments",
+                    "icon": "assignment_ind",
+                    "link": reverse_lazy("admin:academics_teacherclassassignment_changelist"),  # ← TeacherClassAssignment model
+                },
+            ],
+        },
+        {
+            "title": "Profiles",
+            "separator": True,
+            "collapsible": True,
+            "items": [
+                {
+                    "title": "Principal profile",
+                    "icon": "manage_accounts",
+                    "link": reverse_lazy("admin:profiles_principalprofile_changelist"),
+                },
+                {
+                    "title": "Student profiles",
+                    "icon": "school",
+                    "link": reverse_lazy("admin:profiles_studentprofile_changelist"),
+                },
+                {
+                    "title": "Teacher profiles",
+                    "icon": "badge",
+                    "link": reverse_lazy("admin:profiles_teacherprofile_changelist"),
+                },
+            ],
+        },
+        {
+            "title": "Attendance",
+            "separator": True,
+            "collapsible": True,
+            "items": [
+                {
+                    "title": "Attendance records",
+                    "icon": "fact_check",
+                    "link": reverse_lazy("admin:attendance_attendance_changelist"),
+                },
+            ],
+        },
+        {
+            "title": "Library",
+            "separator": True,
+            "collapsible": True,
+            "items": [
+                {
+                    "title": "Books",
+                    "icon": "auto_stories",
+                    "link": reverse_lazy("admin:library_book_changelist"),
+                },
+                {
+                    "title": "Book issues",
+                    "icon": "book_online",
+                    "link": reverse_lazy("admin:library_bookissue_changelist"),
+                },
+            ],
+        },
+    ],
+},
+    
+    
+    
+    
+    
+}
+
+def environment_callback(request):
+    return ["Production", "danger"]   # ["Development", "info"] for dev
+
 INSTALLED_APPS = [
+     # Unfold must come BEFORE django.contrib.admin
+    "unfold",
+    "unfold.contrib.filters",        # optional: advanced filters
+    "unfold.contrib.forms",          # optional: styled forms
+    "unfold.contrib.inlines",        # optional: sortable inlines
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

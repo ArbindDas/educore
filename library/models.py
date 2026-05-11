@@ -51,4 +51,4 @@ class BookIssue(models.Model):
     is_returned = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.student} - {self.book}"
+        return f"{self.student.user.username} - {self.book.title}"

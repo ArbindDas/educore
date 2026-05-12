@@ -18,6 +18,7 @@ class PrincipalProfileSerializer (serializers.ModelSerializer):
             'admin_level',
             'office_room',
             'designation'
+            
         ]
         
 

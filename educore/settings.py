@@ -35,9 +35,13 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'accounts.User'
 
+
 # Application definition
 
-
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:5173",  # Vite (if you use it)
+]
 from django.templatetags.static import static
 from django.urls import reverse_lazy
 
@@ -224,8 +228,11 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'attendance',
     'library',
+    'corsheaders'
 ]
 
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(
@@ -279,6 +286,7 @@ REST_FRAMEWORK = {
 }
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # must be at top'
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

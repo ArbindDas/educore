@@ -10,7 +10,7 @@ from academics.models import AcademicClass
 
 
 class PrincipalProfileSerializer (serializers.ModelSerializer):
-    
+        # Serializer = Model ↔ JSON bridge + validation layer
     class Meta:
         model = PrincipalProfile
         fields = [

@@ -171,28 +171,47 @@ class StudentListCreateView(APIView):
     @extend_schema(
     responses={200: list}
 )
-    def get(self , request):
-        permission_classes = [IsAuthenticated]
-        if request.user.role !='principal':
-            return Response(
-                {"error": "Not allowed"},
-                status=403
-            )
+    # def get(self , request):
+    #     permission_classes = [IsAuthenticated]
+    #     if request.user.role !='principal':
+    #         return Response(
+    #             {"error": "Not allowed"},
+    #             status=403
+    #         )
         
-        student = StudentProfile.objects.all()
+    #     student = StudentProfile.objects.all()
+    #     data = []
+        
+    #     for s in student:
+    #         data.append({
+    #             'id':s.id,
+    #             'class_name':s.class_name,
+    #             'section': s.section,
+    #             'roll_number': s.roll_number,
+    #             'admission_number': s.admission_number,
+    #             'address':s.address
+    #         })
+            
+            
+    #     return Response(data)
+    def get(self, request):
+
+        if request.user.role != 'principal':
+            return Response({"error": "Not allowed"}, status=403)
+
+        students = StudentProfile.objects.select_related('academic_class').all()
+
         data = []
-        
-        for s in student:
+
+        for s in students:
             data.append({
-                'id':s.id,
-                'class_name':s.class_name,
-                'section': s.section,
-                'roll_number': s.roll_number,
-                'admission_number': s.admission_number,
-                'address':s.address
+                "id": s.id,
+                "class_name": s.academic_class.name,  # ✅ correct
+                "roll_number": s.roll_number,
+                "admission_number": s.admission_number,
+                "address": s.address
             })
-            
-            
+
         return Response(data)
     
     
@@ -218,12 +237,19 @@ class StudentDetailView(APIView):
         except StudentProfile.DoesNotExist:
             return Response({"error": "Student not found"}, status=404)
         
+        # return Response({
+        #     'id':student.id,
+        #     'class_name':student.class_name,
+        #     'section': student.section,
+        #     'roll_number': student.roll_number,
+        #     'admission_number': student.admission_number,
+        #     'address': student.address
+        # })
+        
         return Response({
-            'id':student.id,
-            'class_name':student.class_name,
-            'section': student.section,
+            'id': student.id,
+            'class_name': student.academic_class.name,
             'roll_number': student.roll_number,
-            'admission_number': student.admission_number,
             'address': student.address
         })
         
@@ -284,24 +310,41 @@ class TeacherListCreateView(APIView):
     @extend_schema(
     responses={200: list}
 )
-    def get(self , request):
+    # def get(self , request):
+    #     if request.user.role != 'principal':
+    #         return Response(
+    #             {"error": "Not Allowed"},
+    #             status=403
+    #         )
+    #     teachers = TeacherProfile.objects.all()
+    #     data = []
+        
+    #     for t in teachers:
+    #         data.append({
+    #             'id': t.id,
+    #             'phone_number': t.phone_number,
+    #             'experience': t.experience,
+    #             'qualification': t.qualification,
+    #             'subject': t.subject
+    #         })
+            
+    #     return Response(data)
+    def get(self, request):
         if request.user.role != 'principal':
-            return Response(
-                {"error": "Not Allowed"},
-                status=403
-            )
+            return Response({"error": "Not Allowed"}, status=403)
+
         teachers = TeacherProfile.objects.all()
         data = []
-        
+
         for t in teachers:
             data.append({
-                'id': t.id,
-                'phone_number': t.phone_number,
-                'experience': t.experience,
-                'qualification': t.qualification,
-                'subject': t.subject
-            })
-            
+            "id": t.id,
+            "phone_number": t.phone_number,
+            "experience": t.experience,
+            "qualification": t.qualification,
+            "username": t.user.username
+        })
+
         return Response(data)
 
     
@@ -358,7 +401,7 @@ class TeacherDetailView(APIView):
             "phone_number": teacher.phone_number,
             "experience": teacher.experience,
             "qualification": teacher.qualification,
-            "subject": teacher.subject
+            "username": teacher.user.username,
         })
     
     

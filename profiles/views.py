@@ -209,7 +209,8 @@ class StudentListCreateView(APIView):
                 "class_name": s.academic_class.name,  # ✅ correct
                 "roll_number": s.roll_number,
                 "admission_number": s.admission_number,
-                "address": s.address
+                "address": s.address,
+                "username": s.user.username,
             })
 
         return Response(data)

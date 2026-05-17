@@ -24,8 +24,12 @@ urlpatterns = [
    path(
     'attendance/summary/',
     views.AttendanceSummaryView.as_view(), name='attendance-summary'),
+   
+   
    path(
     'attendance/student/<int:student_id>/',
-    views.StudentAttendanceReportView.as_view(),name='student-attendance-report')
+    views.StudentAttendanceReportView.as_view(),name='student-attendance-report'),
+   
+    path('attendance/my-attendance/', views.MyAttendanceView.as_view(), name='my-attendance'),  # Add this line
     
 ]

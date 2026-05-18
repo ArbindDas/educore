@@ -3,7 +3,7 @@ from datetime import date
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-
+from rest_framework import status
 from .models import Book, BookIssue
 from .serializers import (
     BookSerializer,
@@ -46,6 +46,8 @@ class BookListView(APIView):
         serializer = BookSerializer(books, many=True)
 
         return Response(serializer.data)
+    
+    
 
 
 # UPDATE BOOK
@@ -79,7 +81,27 @@ class UpdateBookView(APIView):
 
         return Response(serializer.errors, status=400)
 
+# GET SINGLE BOOK
+class BookDetailView(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def get(self, request, pk):
+        try:
+            book = Book.objects.get(id=pk)
+            return Response({
+                "id": book.id,
+                "title": book.title,
+                "author": book.author,
+                "isbn": book.isbn,
+                "total_copies": book.total_copies,
+                "available_copies": book.available_copies,  # fixed typo: "availiable"
+                "created_at": book.created_at
+            })
+        except Book.DoesNotExist:
+            return Response(
+                {"error": "Book not found"},  # fixed typo: "founnd"
+                status=status.HTTP_404_NOT_FOUND
+            )
 # ISSUE BOOK
 class IssueBookView(APIView):
 
@@ -104,7 +126,10 @@ class IssueBookView(APIView):
         return Response(serializer.errors, status=400)
 
 
-# RETURN BOOK
+
+# RETURN BOOK API
+# This API is used when a student returns a borrowed book to the library.
+# The librarian verifies the returned book physically and then updates the system.
 class ReturnBookView(APIView):
 
     permission_classes = [IsAuthenticated, IsLibrarian]

@@ -21,7 +21,6 @@ class PrincipalProfile(models.Model):
 
 
 
-
 class TeacherProfile(models.Model):
 
     user = models.OneToOneField(

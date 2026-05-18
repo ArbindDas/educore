@@ -49,8 +49,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         
         elif user.role == 'STUDENT':
             StudentProfile.objects.create(user=True)
+            
         
-
+    
         return user
         
   

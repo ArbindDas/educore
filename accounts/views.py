@@ -84,7 +84,7 @@ from .permissions import IsPrincipal
 class UserCreateView(APIView):
     permission_classes = [IsAuthenticated , IsPrincipal]
     
-    @extend_schema(request=RegisterSerializer, responses={201: None})  # 👈 add this
+    @extend_schema(request=RegisterSerializer, responses={201: None}) 
     def post(self , request):
         
         serializer = RegisterSerializer(data=request.data)

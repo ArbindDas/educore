@@ -11,13 +11,21 @@ from academics.models import AcademicClass
 
 class PrincipalProfileSerializer (serializers.ModelSerializer):
         # Serializer = Model ↔ JSON bridge + validation layer
+        
+        
+        
+    username = serializers.CharField(source='user.username', read_only=True)
+    email = serializers.EmailField(source='user.email', read_only=True)
     class Meta:
         model = PrincipalProfile
         fields = [
+            'username',
+            'email',
             'phone_number',
             'admin_level',
             'office_room',
             'designation'
+            
             
         ]
         

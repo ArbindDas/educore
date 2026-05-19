@@ -21,6 +21,23 @@ class PrincipalProfile(models.Model):
 
 
 
+# class TeacherProfile(models.Model):
+
+#     user = models.OneToOneField(
+#         settings.AUTH_USER_MODEL,
+#         on_delete=models.CASCADE,
+#         related_name='teacher_profile'
+#     )
+
+#     phone_number = models.CharField(max_length=20)
+#     experience = models.CharField(max_length=50)
+#     qualification = models.CharField(max_length=100)
+
+#     joining_date = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return self.user.username
+
 class TeacherProfile(models.Model):
 
     user = models.OneToOneField(
@@ -37,6 +54,11 @@ class TeacherProfile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    def delete(self, *args, **kwargs):
+        user = self.user
+        super().delete(*args, **kwargs)
+        user.delete()
 
 
 class StudentProfile(models.Model):

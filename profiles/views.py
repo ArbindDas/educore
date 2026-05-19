@@ -343,7 +343,8 @@ class TeacherListCreateView(APIView):
             "phone_number": t.phone_number,
             "experience": t.experience,
             "qualification": t.qualification,
-            "username": t.user.username
+            "username": t.user.username,
+            "joining_date": t.joining_date
         })
 
         return Response(data)
@@ -435,28 +436,43 @@ class TeacherDetailView(APIView):
     
     
     # DELETE teacher
+    # @extend_schema(responses={204: None})
+    # def delete(self, request, pk):
+        
+        
+    #     if request.user.role != 'principal':
+    #         return Response(
+    #         {"error": "Not allowed"},
+    #         status=403
+    #     )
+            
+    #     try:
+    #         teacher = TeacherProfile.objects.get(id=pk)
+    #     except TeacherProfile.DoesNotExist:
+    #         return Response(
+    #         {"error": "Teacher not found"},
+    #         status=404
+    #     )
+
+    #     teacher.user.delete()   # deletes linked User
+    #     teacher.delete()        # deletes TeacherProfile
+
+    #     return Response({"message": "Teacher deleted"})
+    
     @extend_schema(responses={204: None})
     def delete(self, request, pk):
-        
-        
+
         if request.user.role != 'principal':
-            return Response(
-            {"error": "Not allowed"},
-            status=403
-        )
-            
+            return Response({"error": "Not allowed"}, status=403)
+
         try:
             teacher = TeacherProfile.objects.get(id=pk)
         except TeacherProfile.DoesNotExist:
-            return Response(
-            {"error": "Teacher not found"},
-            status=404
-        )
+            return Response({"error": "Teacher not found"}, status=404)
 
-        teacher.user.delete()   # deletes linked User
-        teacher.delete()        # deletes TeacherProfile
+        teacher.delete()
 
-        return Response({"message": "Teacher deleted"})
+        return Response({"message": "Teacher deleted"}, status=200)
     
     
 
